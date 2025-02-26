@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="love.css">
-    <title>Document</title>
+    <title>Làm người yêu mình nhé</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -16,7 +16,7 @@
                 <div class="handsCat">
                     <img src="../image/handsCat.png" alt="">
                 </div>
-                <h1>Welcome</h1>
+                <h1>Gửi cho</h1>
             </div>
             <div class="boxSlider">
                     <div class="listSlider">
@@ -43,11 +43,13 @@
             <div class="buttonLove">
                 <div class="cricleBtn"></div>
                 <div class="button"></div>
+                <div class= "text"></div>
             </div>
         </div>
         <div class="boxLine">
             <div class="boxCar">
-                <img src="../image/car.gif" alt="">
+                <img class = 'cart2' src="../image/heart2.gif" alt="">
+                <img class = 'cart' src="../image/car.gif" alt="">
             </div>
             <div class="boxHeart">
                 <div class="heart1"></div>
@@ -79,7 +81,6 @@
             <div class="circle2"></div>
         </div>
     </div>
-
     <div class="wrapperLetterForm">
         <div class="boxLetter">
             <i class="fa-solid fa-xmark"></i>
@@ -211,13 +212,13 @@
 
     setTimeout(()=>{
         typeText();
-    }, 11500)
+    }, 8000)
     });
 
     // .textLetter text h2
     let indexText = 0;
     let textLetter = document.querySelector('.textLetter h2');
-    const textLetterH2 = "Gửi Quỳnhhh!";
+    const textLetterH2 = "Gửi em ❤️";
     let timoutTextLetter;
 
     function textCharLetter(){
@@ -245,7 +246,7 @@
     // chữ của thư bạn muốn gửi
     let indexTextContent = 0;
     let textLetterContent = document.querySelector('.contentLetter');
-    const textLetterP = "Quỳnh à, mình nghĩ đã đến lúc chúng ta cần dừng lại, dừng lại cái việc mập mờ tìm hiểu nhau. Mình nhận ra là mình thích bạn và mình nghĩ bạn cũng cảm nhận được điều đó. Mình thật sự muốn có bạn trong cuộc sống của mình, muốn cùng bạn chia sẻ những khoảnh khắc vui buồn. Quỳnh, làm người yêu của mình nhé 💖. Anh thích em! 😊";
+    const textLetterP = "Quỳnh à, mình nghĩ đã đến lúc chúng ta cần dừng lại, dừng lại cái việc mập mờ tìm hiểu nhau. Mình nhận ra là mình thích bạn và mình nghĩ bạn cũng cảm nhận được điều đó. Chúng ta sẽ cùng nhau chia sẻ những khoảnh khắc vui buồn nhé. Quỳnh, làm người yêu anh nhé 💖 😊 (from : chàng trai mộng mơ 🐷)";
     let timoutTextLetterContent;
     function textCharLetterContent(){
         if (indexTextContent < textLetterP.length) {
@@ -277,6 +278,25 @@
     })
 
     document.querySelector(".buttonLove").addEventListener("click", function(){
+    let audio = document.querySelector("#audioLove");
+    
+    if (!audio) { 
+        // Nếu chưa có audio, tạo và phát
+        audio = new Audio("../audio.mp3"); 
+        audio.id = "audioLove"; 
+        audio.loop = true; // Nếu muốn phát liên tục
+        document.body.appendChild(audio);
+    }
+    
+    if (audio.paused) {
+        audio.play();
+    }
+
+    setTimeout(()=>{
+                document.querySelector(".button").innerHTML = "Ấn vào những lá thư nha"
+                document.querySelector(".buttonLove").style.width = "250px"
+                document.querySelector(".button").style.transform = "translateX(25px)"
+            },4000)
         let timeout = setInterval(()=>{
             var letters = document.createElement("div");
             letters.className = "letters"
