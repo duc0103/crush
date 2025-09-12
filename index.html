@@ -1,54 +1,685 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Thêm thẻ title -->
-    <title>Của Quỳnh</title>
-
-    <!-- Thêm thẻ meta description -->
-    <meta name="description" content="Loạn nhịp mất rồi">
-
-    <!-- Các thẻ meta khác nếu cần -->
-    <meta property="og:title" content="Của Quỳnh">
-    <meta property="og:description" content="Loạn nhịp mất rồi">
-    
-    <link rel="stylesheet" href="style.css">
-    <script src="./app.js" defer></script>
+  <meta charset="UTF-8">
+  <title>Count Love Cute Animation</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+  background: linear-gradient(135deg, #ffd1e6 0%, #d1b3ff 100%);
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+    }
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 1;
+    }
+  </style>
 </head>
 <body>
-    <div class="loading">
-        <div class="boxHeartImg">
-            <div class="heartItem item1">
-                <img src="./image/heart.png" alt="">
-            </div>
-            <div class="heartItem item2">
-                <img src="./image/heart.png" alt="">
-            </div>
-            <div class="heartItem item3">
-                <img src="./image/heart.png" alt="">
-            </div>
-        </div>
-        <div class="heartBox">
-            <div class="heart"></div>
-        </div>
-        <div class="progress-bar">
-            <div class="progress"></div>
-            <div class="percent">100%</div>
-        </div>
-        <h2 class="textBox">
-            <span class="textLoad">Chờ xíu nha</span>
-            <span class="cricle1">.</span>
-            <span class="cricle2">.</span>
-            <span class="cricle3">.</span>
-        </h2>
-        <div class="buttonCLick">
-            <img src="./image/cursor.png" alt="">
-            <div class="button">
-                <p class="textBtn"></p>
-            </div>
-        </div>
-    </div>
-</body>
+<canvas id="loveCanvas"></canvas>
+<script>
+let canvas = document.getElementById('loveCanvas');
+let ctx = canvas.getContext('2d');
+function resizeCanvas() {
+  w = window.innerWidth;
+  h = window.innerHeight;
+  // Use devicePixelRatio for sharpness
+  let dpr = window.devicePixelRatio || 1;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(dpr, dpr);
+}
+let w, h;
+resizeCanvas();
+// Add image.png
+let customImg = new Image();
+customImg.src = 'image.png'; // Ensure image.png is in the same directory
+
+// Nhân vật PNG/GIF
+let maleImg = new Image();
+let femaleImg = new Image();
+// Set image sources (update these paths to your actual image files)
+maleImg.src = 'male.gif'; // Replace with your image path or URL
+femaleImg.src = 'giphy-2.gif'; // Replace with your image path or URL
+
+// Days in love
+let FEMALE_NAME = 'Văn Đức';
+let MALE_NAME = 'Hồ Quỳnh';
+let LOVE_START_DATE = new Date('2025-03-01');
+let daysInLove = Math.floor((new Date() - LOVE_START_DATE) / (1000 * 60 * 60 * 24));
+let animatedDays = 0;
+
+// Heart particles
+let hearts = [];
+function spawnHeart() {
+  // Spread hearts across the width, spawn from bottom
+  let x = Math.random() * w;
+  let y = h + 30 + Math.random()*60;
+  let size = 30 + Math.random() * 10;
+  let redHues = [0, 2, 5, 355, 358];
+  let hue = redHues[Math.floor(Math.random()*redHues.length)] + Math.floor(Math.random()*6-3);
+  let color = `hsl(${hue},85%,60%)`;
+  let rot = Math.random() * Math.PI * 2;
+  let vy = 3.2 + Math.random()*1.8; // faster hearts
+  hearts.push({
+    x, y, size, color, rot, rotSpeed: (Math.random()-0.5)*0.04, vy, bounce: Math.random()*Math.PI*2
+  });
+}
+// Spawn hearts after a delay for staged effect
+setTimeout(()=>{
+  for(let i=0;i<8;i++) spawnHeart(); // fewer hearts for smoother animation
+}, 2200);
+
+// Envelope (letter) particles
+// Bubble particles
+// Firework particles
+let fireworks = [];
+// Firework: { phase: 'rocket'|'burst', rocket: {...}, particles: [...], life: number }
+function randomColor() {
+  // Vibrant color palette
+  let palettes = [
+    ['#ffecb3','#ffd54f','#ffb300','#ff6f00','#ff8a65'],
+    ['#b3e5fc','#4fc3f7','#0288d1','#01579b','#00bcd4'],
+    ['#f8bbd0','#f06292','#ad1457','#ba68c8','#7c43bd'],
+    ['#c8e6c9','#81c784','#388e3c','#a5d6a7','#43a047'],
+    ['#fff','#f44336','#e91e63','#9c27b0','#3f51b5']
+  ];
+  let palette = palettes[Math.floor(Math.random()*palettes.length)];
+  return palette[Math.floor(Math.random()*palette.length)];
+}
+
+function spawnFirework() {
+  if (fireworks.length >= 2) return; // max 2 rocket
+  let x = Math.random() * w * 0.8 + w*0.1;
+  let y = h * 0.95; // đáy màn hình
+  let color = randomColor();
+let rocket = { x, y, vx: (Math.random()-0.5)*0.5, vy: -30 - Math.random()*3, color, trail: [] };
+
+//   let rocket = {
+//     x, y,
+//     vx: (Math.random()-0.5)*0.3, // nhẹ cho mobile
+//     vy: -10 - Math.random()*3,   // bắn cao hơn
+//     color,
+//     trail: []
+// };
+
+  fireworks.push({phase:'rocket', rocket, particles:null, life:0});
+}
+
+function drawFirework(fw) {
+  if (fw.phase === 'rocket') {
+    // Draw rocket trail (long, fading)
+    if (fw.rocket.trail.length > 2) {
+      ctx.save();
+      ctx.beginPath();
+      for(let i=0;i<fw.rocket.trail.length-1;i++) {
+        ctx.moveTo(fw.rocket.trail[i][0], fw.rocket.trail[i][1]);
+        ctx.lineTo(fw.rocket.trail[i+1][0], fw.rocket.trail[i+1][1]);
+      }
+      ctx.strokeStyle = fw.rocket.color;
+      ctx.globalAlpha = 0.10 + 0.18 * (fw.rocket.trail.length/32);
+      ctx.lineWidth = 2.8;
+      ctx.shadowColor = fw.rocket.color;
+      ctx.shadowBlur = 22;
+      ctx.stroke();
+      ctx.restore();
+    }
+    // Draw rocket head
+    ctx.save();
+    ctx.globalAlpha = 0.98;
+    ctx.beginPath();
+    ctx.arc(fw.rocket.x, fw.rocket.y, 8, 0, Math.PI*2);
+    ctx.fillStyle = fw.rocket.color;
+    ctx.shadowColor = '#fff';
+    ctx.shadowBlur = 28;
+    ctx.fill();
+    ctx.restore();
+  } else if (fw.phase === 'burst' && fw.particles) {
+    for(let p of fw.particles) {
+      // Draw longer trail, fade out
+      if (p.trail.length > 2) {
+        ctx.save();
+        ctx.beginPath();
+        for(let i=0;i<p.trail.length-1;i++) {
+          ctx.moveTo(p.trail[i][0], p.trail[i][1]);
+          ctx.lineTo(p.trail[i+1][0], p.trail[i+1][1]);
+        }
+        ctx.strokeStyle = p.color;
+        ctx.globalAlpha = 0.10 + 0.13 * (p.alpha);
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 16;
+        ctx.stroke();
+        ctx.restore();
+      }
+      // Sparkle at the end before disappearing
+      if (p.alpha < 0.25 && p.alpha > 0.05) {
+        ctx.save();
+        ctx.globalAlpha = p.alpha*2.5;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius*2.2, 0, Math.PI*2);
+        ctx.fillStyle = '#fff';
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 32;
+        ctx.fill();
+        ctx.restore();
+      }
+      // Draw particle
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 24;
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+}
+
+function drawBubble(b) {
+  ctx.save();
+  ctx.globalAlpha = b.alpha;
+  ctx.beginPath();
+  ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
+  ctx.fillStyle = b.color;
+  ctx.shadowColor = '#fff';
+  ctx.shadowBlur = 12;
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawEnvelope(x, y, size, rot) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rot);
+  ctx.scale(size/40, size/40);
+  // Envelope body
+  ctx.beginPath();
+  ctx.rect(-20, -12, 40, 24);
+  ctx.fillStyle = '#fffde7';
+  ctx.shadowColor = '#ffe0f7';
+  ctx.shadowBlur = 8;
+  ctx.fill();
+  ctx.strokeStyle = '#f8bbd0';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // Envelope flap
+  ctx.beginPath();
+  ctx.moveTo(-20, -12);
+  ctx.lineTo(0, 8);
+  ctx.lineTo(20, -12);
+  ctx.closePath();
+  ctx.fillStyle = '#ffd1e6';
+  ctx.fill();
+  ctx.strokeStyle = '#f8bbd0';
+  ctx.stroke();
+  // Heart stamp
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.bezierCurveTo(0, -3, 5, -3, 5, 0);
+  ctx.bezierCurveTo(5, 4, 0, 6, 0, 8);
+  ctx.bezierCurveTo(0, 6, -5, 4, -5, 0);
+  ctx.bezierCurveTo(-5, -3, 0, -3, 0, 0);
+  ctx.closePath();
+  ctx.fillStyle = '#ff69b4';
+  ctx.shadowColor = '#fff';
+  ctx.shadowBlur = 4;
+  ctx.fill();
+  ctx.restore();
+
+}
+
+// Trung thu: vẽ mặt trăng, đèn lồng, mây
+function drawMoon() {
+  ctx.save();
+  ctx.globalAlpha = 0.9;
+  ctx.beginPath();
+  ctx.arc(w/2, h/2-180, 90, 0, Math.PI*2);
+  ctx.fillStyle = '#fffde4';
+  ctx.shadowColor = '#ffe0b2';
+  ctx.shadowBlur = 60;
+  ctx.fill();
+  ctx.restore();
+}h
+function drawLantern(x, y, scale=1, color='#ffb74d') {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 22, 32, 0, 0, Math.PI*2);
+  ctx.fillStyle = color;
+  ctx.shadowColor = '#fffde4';
+  ctx.shadowBlur = 16;
+  ctx.fill();
+  ctx.strokeStyle = '#fff8e1';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // dây treo
+  ctx.beginPath();
+  ctx.moveTo(0, -32);
+  ctx.lineTo(0, -50);
+  ctx.strokeStyle = '#bdbdbd';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.restore();
+}
+function drawCloud(x, y, scale=1) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.globalAlpha = 0.5;
+  ctx.beginPath();
+  ctx.arc(0, 0, 30, 0, Math.PI*2);
+  ctx.arc(30, 10, 22, 0, Math.PI*2);
+  ctx.arc(-25, 10, 18, 0, Math.PI*2);
+  ctx.arc(10, 25, 16, 0, Math.PI*2);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+  ctx.restore();
+}
+
+// Responsive
+window.addEventListener('resize', resizeCanvas);
+
+// Draw heart shape
+function drawHeart(x, y, size, color, rot) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rot);
+  ctx.scale(size/50, size/50);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.bezierCurveTo(0, -15, 25, -15, 25, 0);
+  ctx.bezierCurveTo(25, 20, 0, 30, 0, 40);
+  ctx.bezierCurveTo(0, 30, -25, 20, -25, 0);
+  ctx.bezierCurveTo(-25, -15, 0, -15, 0, 0);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.shadowColor = '#fff';
+  ctx.shadowBlur = 12;
+  ctx.fill();
+  ctx.restore();
+}
+
+// Main animation loop
+function animate() {
+    // let moonMove = Math.sin(Date.now()/1200) * 30; // <-- đặt ở đây
+  // Hiệu ứng trăng chuyển động hình vòng cung
+  let moonPhase = (Math.sin(Date.now()/4000) + 1) / 2;
+  // Hiệu ứng trăng chuyển động hình vòng cung chậm hơn
+  let moonArcRadius = 70;
+  let moonArcAngle = Math.sin(Date.now()/7000) * Math.PI; // chu kỳ dài hơn, di chuyển chậm hơn
+  let moonMoveX = Math.cos(moonArcAngle) * moonArcRadius;
+  let moonMoveY = Math.sin(moonArcAngle) * moonArcRadius;
+
+
+  ctx.clearRect(0,0,w,h);  // Animate fireworks
+  // Only spawn one firework at a time, random interval
+  if (fireworks.length === 0 && Math.random() < (0.02 + Math.random()*0.08)) spawnFirework();
+  for(let fw of fireworks) {
+    drawFirework(fw);
+  if (fw.phase === 'rocket') {
+      // Update rocket
+      fw.rocket.trail.push([fw.rocket.x, fw.rocket.y]);
+      if (fw.rocket.trail.length > 24) fw.rocket.trail.shift();
+      fw.rocket.x += fw.rocket.vx;
+      fw.rocket.y += fw.rocket.vy;
+      fw.rocket.vy += 0.25; // gravity
+      // Burst only after rocket reaches peak and starts falling
+      console.log(fw.rocket.vy)
+      if (fw.rocket.vy > -18 && !fw.particles) {
+        // Burst phase
+        let burstType = Math.random();
+        let count = 60 + Math.floor(Math.random()*20); 
+         // wider burst
+        let particles = [];
+        for(let i=0;i<count;i++) {
+          let angle = (Math.PI*2) * (i/count);
+          let speed = 15 + Math.random()*7;  // wider spread
+          // Star/flower shape
+          if (burstType > 0.7) {
+            angle += Math.sin(i*2.5) * 0.3;
+            speed *= 0.7 + 0.6*Math.abs(Math.sin(i*2.5));
+          }
+          // Multi-color burst: random vibrant color for each particle
+          let color = randomColor();
+          particles.push({
+            x: fw.rocket.x,
+            y: fw.rocket.y,
+            vx: Math.cos(angle)*speed,
+            vy: Math.sin(angle)*speed,
+            alpha: 1,
+            color,
+            radius: 4.5 + Math.random()*3.5,
+            trail: [],
+            sparkle: Math.random() > 0.7
+          });
+        }
+        fw.phase = 'burst';
+        fw.particles = particles;
+        // Slow down hearts for 1.2s
+        // window.heartSlowUntil = Date.now() + 1200;
+      }
+    } else if (fw.phase === 'burst' && fw.particles) {
+      for(let p of fw.particles) {
+        p.trail.push([p.x, p.y]);
+        if (p.trail.length > 40) p.trail.shift(); // even longer trail
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.98;
+        p.vy *= 0.98;
+        // Fade slower at first, then faster near the end
+        if (p.alpha > 0.5) {
+          p.alpha -= 0.008 + Math.random()*0.006;
+        } else {
+          p.alpha -= 0.022 + Math.random()*0.012;
+        }
+        // Sparkle at the end
+        if (p.alpha < 0.25 && p.alpha > 0.05) {
+          p.radius += 0.2;
+        }
+      }
+    }
+    fw.life++;
+  }
+  // Remove faded fireworks
+  for(let i=fireworks.length-1;i>=0;i--) {
+    if (fireworks[i].phase === 'burst') {
+      if (fireworks[i].life > 80 || fireworks[i].particles.every(p=>p.alpha<=0)) {
+        fireworks.splice(i,1);
+      }
+    } else if (fireworks[i].phase === 'rocket') {
+      if (fireworks[i].life > 60) {
+        fireworks.splice(i,1);
+      }
+    }
+  }
+  // Responsive positions/sizes for mobile and portrait
+  let isMobile = true;
+  let isPortrait = h > w;
+  // iPhone portrait: boost sizes
+  let charScale = 1;
+  let fontScale = 1;
+  if (isMobile && isPortrait) {
+    charScale = 1.35;
+    fontScale = 1.25;
+  } else if (isMobile) {
+    charScale = 1;
+    fontScale = 1;
+  }
+  let moonY = isMobile ? h/2-80 : h/2-180;
+  let moonR = (isMobile ? 50 : 90) * charScale;
+  drawMoon = function() {
+    ctx.save();
+    // Vị trí mặt trăng chuyển động theo vòng cung
+    let moonCenterX = w/2 + moonMoveX;
+    let moonCenterY = moonY + moonMoveY;
+    ctx.globalAlpha = 0.9;
+    ctx.beginPath();
+    ctx.arc(moonCenterX, moonCenterY, moonR, 0, Math.PI*2);
+    ctx.fillStyle = '#fffde4';
+    ctx.shadowColor = '#ffe0b2';
+    ctx.shadowBlur = 40 * charScale;
+    ctx.fill();
+    ctx.restore();
+    // Draw Chú Cuội cartoon sitting on the moon
+    // drawChuCuoi(moonCenterX, moonCenterY, moonR);
+  };
+  drawMoon();
+  drawCloud(w/2-0.27*w, moonY-40, ( 1.1) * charScale);
+  drawCloud(w/2+0.2*w, moonY+10, ( 1) * charScale);
+  drawCloud(w/2, h/2-0.13*h, ( 1.2) * charScale);
+  drawLantern(w/2-0.37*w, h/2-0.13*h, ( 1) * charScale, '#ffb74d');
+  drawLantern(w/2+0.37*w, h/2-0.10*h, ( 1) * charScale, '#e57373');
+  drawLantern(w/2, h/2+0.10*h, ( 1) * charScale, '#ffd54f');
+
+  // Draw custom image.png at the bottom, max width
+  if (customImg.complete && customImg.naturalWidth) {
+    ctx.save();
+    let imgW = 900; // 98% of canvas width
+    let imgH = imgW * (customImg.naturalHeight/customImg.naturalWidth);
+    let y = h - imgH - 8; // 8px margin from bottom
+    ctx.globalAlpha = 0.98;
+    ctx.drawImage(customImg, w/2 - imgW/2, y, imgW, imgH);
+    ctx.restore();
+  }
+
+  // Draw male character (left, căn giữa khung hình)
+  if (maleImg.complete && maleImg.naturalWidth) {
+    ctx.save();
+    let charX = w/2-(180)*charScale;
+    let charY = h/2+(120)*charScale;
+    let charW = (180)*charScale, charH = (220)*charScale;
+    ctx.translate(charX, charY);
+    ctx.rotate(Math.sin(Date.now()*0.001)*0.05);
+    let scale = 1 + Math.sin(Date.now()*0.002)*0.05;
+    ctx.scale(scale, scale);
+    ctx.drawImage(maleImg, -charW/2, -charH/2, charW, charH);
+    ctx.restore();
+  }
+  // Draw female character (right, căn giữa khung hình, flip horizontal)
+  if (femaleImg.complete && femaleImg.naturalWidth) {
+    ctx.save();
+    let charX = w/2+(180)*charScale;
+    let charY = h/2+(120)*charScale;
+    let charW = (180)*charScale, charH = (220)*charScale;
+    ctx.translate(charX, charY);
+    ctx.rotate(Math.cos(Date.now()*0.001)*0.05);
+    let scale = 1 + Math.cos(Date.now()*0.002)*0.05;
+    ctx.scale(-scale, scale); // flip horizontal
+    ctx.drawImage(femaleImg, -charW/2, -charH/2, charW, charH);
+    ctx.restore();
+  }
+
+  // Animate hearts
+  for(let heart of hearts) {
+    // Speed: fast at bottom, slow at center/top
+    let progress = 1 - (heart.y / h); // 0 at bottom, 1 at top
+    let speedFactor = 2.2 - progress * 1.2;
+    heart.y -= heart.vy * speedFactor;
+  heart.rot += heart.rotSpeed;
+  heart.x += Math.sin(heart.bounce)*1.2; // simpler bounce
+  let displaySize = heart.size + Math.sin(heart.bounce)*4; // rung quanh size gốc, biên độ lớn hơn
+  drawHeart(heart.x, heart.y, displaySize, heart.color, heart.rot);
+  // Bounce effect
+  // heart.size += Math.sin(heart.bounce)*0.2; // bỏ tăng size gốc
+    if(heart.y < -50) {
+      heart.y = h + 30 + Math.random()*60;
+      heart.x = Math.random() * w;
+    }
+  }
+
+  // Cute text
+  ctx.save();
+  let nameFont = `bold ${48*fontScale}px Comic Sans MS, Pacifico, Arial`;
+  let daysFont = isMobile ? `bold ${40*fontScale}px Comic Sans MS, Pacifico, Arial` : `bold ${80*fontScale}px Comic Sans MS, Pacifico, Arial`;
+  let labelFont = isMobile ? `bold ${18*fontScale}px Comic Sans MS, Pacifico, Arial` : `bold ${36*fontScale}px Comic Sans MS, Pacifico, Arial`;
+  ctx.font = nameFont;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = '#fff';
+  ctx.shadowBlur = 12 * fontScale;
+  ctx.strokeStyle = '#ffe0f7';
+  ctx.lineWidth = 8 * fontScale;
+  ctx.strokeText(MALE_NAME, w/2-(180)*charScale, h/2-(isMobile?20:40)*charScale);
+  ctx.fillStyle = '#ff69b4';
+  ctx.fillText(MALE_NAME, w/2-(180)*charScale, h/2-(isMobile?20:40)*charScale);
+
+  ctx.strokeText(FEMALE_NAME, w/2+180*charScale, h/2-(isMobile?20:40)*charScale);
+  ctx.fillStyle = '#ba68c8';
+  ctx.fillText(FEMALE_NAME, w/2+180*charScale, h/2-(isMobile?20:40)*charScale);
+
+  // Large central heart with liquid fill effect
+  let heartCenterX = w/2;
+  let heartCenterY = 100 + Math.min(w, h) * 0.16;
+  let heartSize = Math.min(w, h) * 0.32;
+  // Draw heart outline
+  ctx.save();
+  ctx.translate(heartCenterX, heartCenterY);
+  ctx.scale(heartSize/50, heartSize/50);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.bezierCurveTo(0, -15, 25, -15, 25, 0);
+  ctx.bezierCurveTo(25, 20, 0, 30, 0, 40);
+  ctx.bezierCurveTo(0, 30, -25, 20, -25, 0);
+  ctx.bezierCurveTo(-25, -15, 0, -15, 0, 0);
+  ctx.closePath();
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = '#ffb6d5';
+  ctx.shadowColor = '#fff';
+  ctx.shadowBlur = 8;
+  ctx.stroke();
+  ctx.restore();
+
+  // Liquid fill animation: animate from empty to full, then keep waving
+  if(typeof window.liquidFill === 'undefined') window.liquidFill = 0;
+  if(window.liquidFill < 1) {
+    window.liquidFill += 0.025; // speed of fill
+    if(window.liquidFill > 1) window.liquidFill = 1;
+  }
+  let liquidPercent = window.liquidFill;
+  let liquidHeight = heartSize * 0.8 * liquidPercent;
+  ctx.save();
+  ctx.translate(heartCenterX, heartCenterY);
+  ctx.scale(heartSize/50, heartSize/50);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.bezierCurveTo(0, -15, 25, -15, 25, 0);
+  ctx.bezierCurveTo(25, 20, 0, 30, 0, 40);
+  ctx.bezierCurveTo(0, 30, -25, 20, -25, 0);
+  ctx.bezierCurveTo(-25, -15, 0, -15, 0, 0);
+  ctx.closePath();
+  ctx.clip();
+  // Draw liquid
+  let waveY = 40 - (liquidHeight/(heartSize/50));
+  ctx.beginPath();
+  ctx.moveTo(-25, waveY);
+  for(let x=-25;x<=25;x+=2){
+    let waveAmp = (window.liquidFill < 1) ? 1 : 3; // bigger wave when full
+    let y = waveY + Math.sin(Date.now()/600 + x/6)*waveAmp;
+    ctx.lineTo(x, y);
+  }
+  ctx.lineTo(25, 41);
+  ctx.lineTo(-25, 41);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(255,105,180,0.85)';
+  ctx.shadowColor = '#fff';
+  ctx.shadowBlur = 16;
+  ctx.fill();
+  ctx.restore();
+
+  // Draw date count in center of heart
+  ctx.save();
+  ctx.font = `bold ${Math.floor(heartSize*0.38)}px Comic Sans MS, Pacifico, Arial`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = '#fff';
+  ctx.shadowBlur = 16;
+  ctx.strokeStyle = '#ffe0f7';
+  ctx.lineWidth = 8;
+  let showDays = Math.floor(animatedDays);
+  ctx.strokeText(showDays, heartCenterX, heartCenterY);
+  ctx.fillStyle = '#ff4081';
+  ctx.fillText(showDays, heartCenterX, heartCenterY);
+  ctx.font = `bold ${Math.floor(heartSize*0.13)}px Comic Sans MS, Pacifico, Arial`;
+  ctx.fillStyle = '#b39ddb';
+  ctx.fillText('days together', heartCenterX, heartCenterY + heartSize*0.22);
+  ctx.restore();
+
+  // Animate days counter
+  if(animatedDays < daysInLove) {
+    animatedDays += (daysInLove - animatedDays)*0.08 + 0.5;
+    if(animatedDays > daysInLove) animatedDays = daysInLove;
+  }
+
+  requestAnimationFrame(animate);
+}
+
+// Draw a simple Chú Cuội cartoon sitting on the moon
+function drawChuCuoi(x, y, r) {
+  ctx.save();
+  // Body
+  ctx.beginPath();
+  ctx.arc(x, y + r*0.25, r*0.13, 0, Math.PI*2);
+  ctx.fillStyle = '#ffe082';
+  ctx.fill();
+  // Head
+  ctx.beginPath();
+  ctx.arc(x, y + r*0.12, r*0.07, 0, Math.PI*2);
+  ctx.fillStyle = '#ffcc80';
+  ctx.fill();
+  // Face details
+  ctx.beginPath();
+  ctx.arc(x, y + r*0.11, r*0.03, 0, Math.PI);
+  ctx.strokeStyle = '#795548';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // Eyes
+  ctx.beginPath();
+  ctx.arc(x - r*0.025, y + r*0.10, r*0.012, 0, Math.PI*2);
+  ctx.arc(x + r*0.025, y + r*0.10, r*0.012, 0, Math.PI*2);
+  ctx.fillStyle = '#222';
+  ctx.fill();
+  // Hair
+  ctx.beginPath();
+  ctx.arc(x, y + r*0.07, r*0.07, Math.PI, Math.PI*2);
+  ctx.fillStyle = '#6d4c41';
+  ctx.fill();
+  // Legs
+  ctx.beginPath();
+  ctx.moveTo(x - r*0.04, y + r*0.32);
+  ctx.lineTo(x - r*0.04, y + r*0.40);
+  ctx.moveTo(x + r*0.04, y + r*0.32);
+  ctx.lineTo(x + r*0.04, y + r*0.40);
+  ctx.strokeStyle = '#8d6e63';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  // Arms
+  ctx.beginPath();
+  ctx.moveTo(x - r*0.09, y + r*0.20);
+  ctx.lineTo(x - r*0.16, y + r*0.13);
+  ctx.moveTo(x + r*0.09, y + r*0.20);
+  ctx.lineTo(x + r*0.16, y + r*0.13);
+  ctx.strokeStyle = '#8d6e63';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.restore();
+}
+
+// Click to spawn more hearts
+canvas.addEventListener('pointerdown', ()=>{
+  // for(let i=0;i<2;i++) spawnBalloon();
+  // for(let b of balloons) {
+  //   b.y -= b.vy;
+  //   b.x += b.vx + Math.sin(Date.now()/1200 + b.sway)*0.7;
+  //   b.alpha = 0.7 + 0.3*Math.sin(Date.now()/1500 + b.sway);
+  //   drawBalloon(b);
+  //   if(b.y < -60) {
+  //     b.y = h + 60;
+  //     b.x = Math.random()*w;
+  //   }
+  // }
+  // for(let i=0;i<10;i++) spawnHeart();
+  // Xoay tất cả trái tim một góc nhỏ khi chạm
+  for(let heart of hearts) {
+    heart.rot += Math.PI/6; // xoay 30 độ
+  }
+});
+
+animate();
+</script>
 </html>
