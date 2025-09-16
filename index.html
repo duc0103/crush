@@ -1,685 +1,802 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Count Love Cute Animation</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-  background: linear-gradient(135deg, #ffd1e6 0%, #d1b3ff 100%);
-      width: 100vw;
-      height: 100vh;
-      touch-action: none;
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>200 days</title>
+        <link rel="Shortcut Icon" href="https://i.pinimg.com/236x/a5/20/de/a520deb545fea9b62776e6bea5d77928.jpg" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">      
+          <style>
+            html {
+                height: 100%;
+            }
+            body {
+                font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+                background: #79a8ae;
+                color: #CFEBE4;
+                font-size: 18px;
+                line-height: 2;
+                letter-spacing: 1.2px;
+                margin: 0;
+            }
+            a {
+                color: #ebf7f4;
+            }
+            .body--ready {
+                background: -webkit-linear-gradient(top, rgb(203, 235, 219) 0%, rgb(55, 148, 192) 120%);
+                background: -moz-linear-gradient(top, rgb(203, 235, 219) 0%, rgb(55, 148, 192) 120%);
+                background: -o-linear-gradient(top, rgb(203, 235, 219) 0%, rgb(55, 148, 192) 120%);
+                background: -ms-linear-gradient(top, rgb(203, 235, 219) 0%, rgb(55, 148, 192) 120%);
+                background: linear-gradient(top, rgb(203, 235, 219) 0%, rgb(55, 148, 192) 120%);
+            }
+            .text {
+                position: fixed;
+                bottom: 100px;
+                text-align: center;
+                width: 100%;
+            }
+            .canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none; /* để click qua canvas xuống DOM */
+                z-index: 2; 
+            }
+            img#logo {
+                width: 128px;
+                background-size: cover;
+                border-radius: 200px;
+                box-shadow: 0px 0px 40px rgba(63, 81, 181, 0.72);
+                border: 3px solid #00a0ff;
+                opacity: 1;
+                margin: 0 auto;
+                margin-top: 20px;
+                margin-bottom: 20px;
+                transition: all 1.0s;
+            }
+            #logo:hover {
+                box-shadow: 0 0 10px #fff;
+                -webkit-box-shadow: 0 0 19px #fff;
+                transform: rotate(360deg);
+                -ms-transform: rotate(360deg); /* IE 9 */
+                -moz-transform: rotate(360deg); /* Firefox */
+                -webkit-transform: rotate(360deg); /* Safari 和 Chrome */
+                -o-transform: rotate(360deg); /* Opera */
+                filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+            }
+            .cs {
+                width: 100%;
+                height: 100%;
+                margin: 0 auto;
+                position: absolute;
+                text-align: center;
+            }
+            .text {
+                position: fixed;
+                bottom: 20px;
+                text-align: center;
+                width: 100%;
+                font-weight: bold;
+            }
+            .text-right {
+                position: fixed;
+                bottom: 50px;
+                text-align: right;
+                width: 100%;
+                font-weight: bold;
+            }
+            canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+       @media screen and (orientation: portrait) {
+    body.cover-message::before {
+        content: "📱🔄 Please rotate your phone ↔️";
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: #000;
+        color: #fff;
+        font-size: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        z-index: 9999;
     }
-    canvas {
-      display: block;
-      width: 100vw;
-      height: 100vh;
-      max-width: 100vw;
-      max-height: 100vh;
-      position: fixed;
-      left: 0;
-      top: 0;
-      z-index: 1;
-    }
-  </style>
-</head>
-<body>
-<canvas id="loveCanvas"></canvas>
-<script>
-let canvas = document.getElementById('loveCanvas');
-let ctx = canvas.getContext('2d');
-function resizeCanvas() {
-  w = window.innerWidth;
-  h = window.innerHeight;
-  // Use devicePixelRatio for sharpness
-  let dpr = window.devicePixelRatio || 1;
-  canvas.width = w * dpr;
-  canvas.height = h * dpr;
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.scale(dpr, dpr);
 }
-let w, h;
-resizeCanvas();
-// Add image.png
-let customImg = new Image();
-customImg.src = 'image.png'; // Ensure image.png is in the same directory
+        </style>
+    
+    </head>
+    
+    <body>
+        
 
-// Nhân vật PNG/GIF
-let maleImg = new Image();
-let femaleImg = new Image();
-// Set image sources (update these paths to your actual image files)
-maleImg.src = 'male.gif'; // Replace with your image path or URL
-femaleImg.src = 'giphy-2.gif'; // Replace with your image path or URL
+    <canvas id="rainCanvas"></canvas>
+    <canvas class="canvas"></canvas>
+    <canvas id="pinkboard"></canvas> 
 
-// Days in love
-let FEMALE_NAME = 'Văn Đức';
-let MALE_NAME = 'Hồ Quỳnh';
-let LOVE_START_DATE = new Date('2025-03-01');
-let daysInLove = Math.floor((new Date() - LOVE_START_DATE) / (1000 * 60 * 60 * 24));
-let animatedDays = 0;
+    <section class="fireworks" id="sec1" style="display:none">
+    </section>
 
-// Heart particles
+    
+
+    
+        <script>
+        // Helper: detect orientation and toggle cover message
+        function updateOrientationCover() {
+            if (window.matchMedia('(orientation: portrait)').matches) {
+                document.body.classList.add('cover-message');
+            } else {
+                document.body.classList.remove('cover-message');
+            }
+        }
+        window.addEventListener('resize', updateOrientationCover);
+        window.addEventListener('orientationchange', updateOrientationCover);
+        document.addEventListener('DOMContentLoaded', updateOrientationCover);
+        var S = {
+            init: function () {
+                S.Drawing.init('.canvas');
+                document.body.classList.add('body--ready');
+                S.UI.simulate("|#countdown 3|Happy Anniversary|200days|Văn Đức|❤️|Hồ Quỳnh|Mãi bên nhau nhé|Đức ❤️ Quỳnh");               
+                S.Drawing.loop(function () {
+                    S.Shape.render();
+                });
+            }
+        };
+        S.Drawing = (function () {
+            var canvas,
+                context,
+                renderFn,
+                requestFrame = window.requestAnimationFrame ||
+                    window.webkitRequestAnimationFrame ||
+                    window.mozRequestAnimationFrame ||
+                    window.oRequestAnimationFrame ||
+                    window.msRequestAnimationFrame ||
+                    function (callback) {
+                        window.setTimeout(callback, 1000 / 60);
+                    };
+            return {
+                init: function (el) {
+                    canvas = document.querySelector(el);
+                    context = canvas.getContext('2d');
+                    this.adjustCanvas();
+                    window.addEventListener('resize', function (e) {
+                        S.Drawing.adjustCanvas();
+                    });
+                },
+                loop: function (fn) {
+                    renderFn = !renderFn ? fn : renderFn;
+                    this.clearFrame();
+                    renderFn();
+                    requestFrame.call(window, this.loop.bind(this));
+                },
+                adjustCanvas: function () {
+                    canvas.width = window.innerWidth - 100;
+                    canvas.height = window.innerHeight - 30;
+                },
+                clearFrame: function () {
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+                },
+                getArea: function () {
+                    return {w: canvas.width, h: canvas.height};
+                },
+                drawCircle: function (p, c) {
+                    context.fillStyle = c.render();
+                    context.beginPath();
+                    context.arc(p.x, p.y, p.z, 0, 2 * Math.PI, true);
+                    context.closePath();
+                    context.fill();
+                }
+            };
+        }());
+        S.UI = (function () {
+            var interval,
+                currentAction,
+                time,
+                maxShapeSize = 30,
+                sequence = [],
+                cmd = '#';
+            function formatTime(date) {
+                var h = date.getHours(),
+                    m = date.getMinutes(),
+                    m = m < 10 ? '0' + m : m;
+                return h + ':' + m;
+            }
+            function getValue(value) {
+                return value && value.split(' ')[1];
+            }
+            function getAction(value) {
+                value = value && value.split(' ')[0];
+                return value && value[0] === cmd && value.substring(1);
+            }
+            function timedAction(fn, delay, max, reverse) {
+                clearInterval(interval);
+                currentAction = reverse ? max : 1;
+                fn(currentAction);
+                if (!max || (!reverse && currentAction < max) || (reverse && currentAction > 0)) {
+                    interval = setInterval(function () {
+                        currentAction = reverse ? currentAction - 1 : currentAction + 1;
+                        fn(currentAction);
+                        if ((!reverse && max && currentAction === max) || (reverse && currentAction === 0)) {
+                            clearInterval(interval);
+                        }
+                    }, delay);
+                }
+            }
+            function performAction(value) {
+                var action,
+                    value,
+                    current;
+                sequence = typeof (value) === 'object' ? value : sequence.concat(value.split('|'));
+                timedAction(function (index) {
+                    current = sequence.shift();
+                    action = getAction(current);
+                    value = getValue(current);
+                    console.log(value);
+
+                    switch (action) {
+                        case 'countdown':
+                            value = parseInt(value) || 10;
+                            value = value > 0 ? value : 10;
+                            timedAction(function (index) {
+                                if (index === 0) {
+                                    if (sequence.length === 0) {
+                                        S.Shape.switchShape(S.ShapeBuilder.letter(''));
+                                        // Trigger explode effect after last morph
+                                        setTimeout(function() {
+                                            S.Shape.explode();
+                                        }, 800);
+                                    } else {
+                                        performAction(sequence);
+                                    }
+                                } else {
+                                    S.Shape.switchShape(S.ShapeBuilder.letter(index), true);
+                                }
+                            }, 1500, value, true);
+                            break;
+                        case 'rectangle':
+                            value = value && value.split('x');
+                            value = (value && value.length === 2) ? value : [maxShapeSize, maxShapeSize / 2];
+                            S.Shape.switchShape(S.ShapeBuilder.rectangle(Math.min(maxShapeSize, parseInt(value[0])), Math.min(maxShapeSize, parseInt(value[1]))));
+                            break;
+                        case 'circle':
+                            value = parseInt(value) || maxShapeSize;
+                            value = Math.min(value, maxShapeSize);
+                            S.Shape.switchShape(S.ShapeBuilder.circle(value));
+                            break;
+                        case 'time':
+                            var t = formatTime(new Date());
+                            if (sequence.length > 0) {
+                                S.Shape.switchShape(S.ShapeBuilder.letter(t));
+                            } else {
+                                timedAction(function () {
+                                    t = formatTime(new Date());
+                                    if (t !== time) {
+                                        time = t;
+                                        S.Shape.switchShape(S.ShapeBuilder.letter(time));
+                                    }
+                                }, 1000);
+                            }
+                            break;
+                        default:
+                            S.Shape.switchShape(S.ShapeBuilder.letter(current[0] === cmd ? 'HacPai' : current));
+                    }
+                }, 2000, sequence.length);
+            }
+            return {
+                simulate: function (action) {
+                    performAction(action);
+                }
+            };
+        }());
+        S.Point = function (args) {
+            this.x = args.x;
+            this.y = args.y;
+            this.z = args.z;
+            this.a = args.a;
+            this.h = args.h;
+        };
+        S.Color = function (r, g, b, a) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+            this.a = a;
+        };
+        S.Color.prototype = {
+            render: function () {
+                return 'rgba(' + this.r + ',' + +this.g + ',' + this.b + ',' + this.a + ')';
+            }
+        };
+        S.Dot = function (x, y) {
+            this.p = new S.Point({
+                x: x,
+                y: y,
+                z: 2,
+                a: 1,
+                h: 0
+            });
+            this.e = 0.07;
+            this.s = true;
+            // Màu hồng: rgb(255, 105, 180)
+            this.c = new S.Color(255, 105, 180, this.p.a);
+            this.t = this.clone();
+            this.q = [];
+        };
+        S.Dot.prototype = {
+            clone: function () {
+                return new S.Point({
+                    x: this.x,
+                    y: this.y,
+                    z: this.z,
+                    a: this.a,
+                    h: this.h
+                });
+            },
+            _draw: function () {
+                this.c.a = this.p.a;
+                S.Drawing.drawCircle(this.p, this.c);
+            },
+            _moveTowards: function (n) {
+                var details = this.distanceTo(n, true),
+                    dx = details[0],
+                    dy = details[1],
+                    d = details[2],
+                    e = this.e * d;
+                if (this.p.h === -1) {
+                    this.p.x = n.x;
+                    this.p.y = n.y;
+                    return true;
+                }
+                if (d > 1) {
+                    this.p.x -= ((dx / d) * e);
+                    this.p.y -= ((dy / d) * e);
+                } else {
+                    if (this.p.h > 0) {
+                        this.p.h--;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            _update: function () {
+                if (this._moveTowards(this.t)) {
+                    var p = this.q.shift();
+                    if (p) {
+                        this.t.x = p.x || this.p.x;
+                        this.t.y = p.y || this.p.y;
+                        this.t.z = p.z || this.p.z;
+                        this.t.a = p.a || this.p.a;
+                        this.p.h = p.h || 0;
+                    } else {
+                        if (this.s) {
+                            this.p.x -= Math.sin(Math.random() * 3.142);
+                            this.p.y -= Math.sin(Math.random() * 3.142);
+                        } else {
+                            this.move(new S.Point({
+                                x: this.p.x + (Math.random() * 50) - 25,
+                                y: this.p.y + (Math.random() * 50) - 25
+                            }));
+                        }
+                    }
+                }
+                d = this.p.a - this.t.a;
+                this.p.a = Math.max(0.1, this.p.a - (d * 0.05));
+                d = this.p.z - this.t.z;
+                this.p.z = Math.max(1, this.p.z - (d * 0.05));
+            },
+            distanceTo: function (n, details) {
+                var dx = this.p.x - n.x,
+                    dy = this.p.y - n.y,
+                    d = Math.sqrt(dx * dx + dy * dy);
+                return details ? [dx, dy, d] : d;
+            },
+            move: function (p, avoidStatic) {
+                if (!avoidStatic || (avoidStatic && this.distanceTo(p) > 1)) {
+                    this.q.push(p);
+                }
+            },
+            render: function () {
+                this._update();
+                this._draw();
+            }
+        };
+        S.ShapeBuilder = (function () {
+            var gap = 4,
+                shapeCanvas = document.createElement('canvas'),
+                shapeContext = shapeCanvas.getContext('2d'),
+                fontSize = 120,
+                fontFamily = 'Avenir, Helvetica Neue, Helvetica, Arial, sans-serif';
+            function fit() {
+                shapeCanvas.width = Math.floor(window.innerWidth / gap) * gap;
+                shapeCanvas.height = Math.floor(window.innerHeight / gap) * gap;
+                shapeContext.fillStyle = 'red';
+                shapeContext.textBaseline = 'middle';
+                shapeContext.textAlign = 'center';
+            }
+            function processCanvas() {
+                var pixels = shapeContext.getImageData(0, 0, shapeCanvas.width, shapeCanvas.height).data;
+                dots = [],
+                    pixels,
+                    x = 0,
+                    y = 0,
+                    fx = shapeCanvas.width,
+                    fy = shapeCanvas.height,
+                    w = 0,
+                    h = 0;
+                for (var p = 0; p < pixels.length; p += (4 * gap)) {
+                    if (pixels[p + 3] > 0) {
+                        dots.push(new S.Point({
+                            x: x,
+                            y: y
+                        }));
+                        w = x > w ? x : w;
+                        h = y > h ? y : h;
+                        fx = x < fx ? x : fx;
+                        fy = y < fy ? y : fy;
+                    }
+                    x += gap;
+                    if (x >= shapeCanvas.width) {
+                        x = 0;
+                        y += gap;
+                        p += gap * 4 * shapeCanvas.width;
+                    }
+                }
+                return {dots: dots, w: w + fx, h: h + fy};
+            }
+            function setFontSize(s) {
+                shapeContext.font = 'bold ' + s + 'px ' + fontFamily;
+            }
+            function isNumber(n) {
+                return !isNaN(parseFloat(n)) && isFinite(n);
+            }
+            function init() {
+                fit();
+                window.addEventListener('resize', fit);
+            }
+            // Init
+            init();
+            return {
+                imageFile: function (url, callback) {
+                    var image = new Image(),
+                        a = S.Drawing.getArea();
+                    image.onload = function () {
+                        shapeContext.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);
+                        shapeContext.drawImage(this, 0, 0, a.h * 0.6, a.h * 0.6);
+                        callback(processCanvas());
+                    };
+                    image.onerror = function () {
+                        callback(S.ShapeBuilder.letter('What?'));
+                    };
+                    image.src = url;
+                },
+                circle: function (d) {
+                    var r = Math.max(0, d) / 2;
+                    shapeContext.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);
+                    shapeContext.beginPath();
+                    shapeContext.arc(r * gap, r * gap, 2, 0, 2 * Math.PI, false);
+                    shapeContext.fill();
+                    shapeContext.closePath();
+                    return processCanvas();
+                },
+                letter: function (text) {
+                                            text = text + ''; // ép thành string
+
+                    if(text === 'Đức ❤️ Quỳnh') {
+                      document.querySelector('.fireworks').style.display = 'block';
+                    }
+
+                    var maxWidth = shapeCanvas.width * 0.9; // giới hạn chiều rộng canvas
+                    var lineHeight = fontSize * 1.2;       // chiều cao mỗi dòng
+                    var words = text.split(' ');
+                    var lines = [];
+                    var currentLine = '';
+
+                    console.log(words);
+
+    // Chia text thành các dòng dựa trên maxWidth
+                    words.forEach((word, i) => {
+                        var testLine = currentLine + (currentLine ? ' ' : '') + word;
+                        var metrics = shapeContext.measureText(testLine);
+                        if (metrics.width > maxWidth && currentLine !== '') {
+                            lines.push(currentLine);
+                            currentLine = word;
+                        } else {
+                            currentLine = testLine;
+                        }
+                        if (i === words.length - 1) lines.push(currentLine);
+                    });
+
+                    // Xác định font size
+                    setFontSize(fontSize);
+                    shapeContext.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);
+
+                    // Vẽ từng dòng, căn giữa theo width và height canvas
+                    var totalHeight = lines.length * lineHeight;
+                    var y = (shapeCanvas.height - totalHeight) / 2 + lineHeight / 2;
+                    lines.forEach(line => {
+                        shapeContext.fillText(line, shapeCanvas.width / 2, y);
+                        y += lineHeight;
+                    });
+
+                    return processCanvas();
+                },
+                rectangle: function (w, h) {
+                    var dots = [],
+                        width = gap * w,
+                        height = gap * h;
+                    for (var y = 0; y < height; y += gap) {
+                        for (var x = 0; x < width; x += gap) {
+                            dots.push(new S.Point({
+                                x: x,
+                                y: y,
+                                z: 2
+                            }));
+                        }
+                    }
+                    return {dots: dots, w: width, h: height};
+                }
+            };
+        }());
+        S.Shape = (function () {
+            var dots = [],
+                width = 0,
+                height = 0,
+                cx = 0,
+                cy = 0;
+            function compensate() {
+                var a = S.Drawing.getArea();
+                cx = a.w / 2 - width / 2;
+                cy = a.h / 2 - height / 2;
+            }
+            return {
+                shuffleIdle: function () {
+                    var a = S.Drawing.getArea();
+                    for (var d = 0; d < dots.length; d++) {
+                        if (!dots[d].s) {
+                            dots[d].move({
+                                x: Math.random() * a.w,
+                                y: Math.random() * a.h
+                            });
+                        }
+                    }
+                },
+                switchShape: function (n, fast) {
+                    var size,
+                        a = S.Drawing.getArea();
+                    width = n.w;
+                    height = n.h;
+                    compensate();
+                    if (n.dots.length > dots.length) {
+                        size = n.dots.length - dots.length;
+                        for (var d = 1; d <= size; d++) {
+                            dots.push(new S.Dot(a.w / 2, a.h / 2));
+                        }
+                    }
+                    var d = 0,
+                        i = 0;
+                    while (n.dots.length > 0) {
+                        i = Math.floor(Math.random() * n.dots.length);
+                        dots[d].e = fast ? 0.25 : (dots[d].s ? 0.14 : 0.11);
+                        if (dots[d].s) {
+                            dots[d].move(new S.Point({
+                                z: Math.random() * 20 + 10,
+                                a: Math.random(),
+                                h: 18
+                            }));
+                        } else {
+                            dots[d].move(new S.Point({
+                                z: Math.random() * 5 + 2,
+                                h: fast ? 18 : 30
+                            }));
+                        }
+                        dots[d].s = true;
+                        dots[d].move(new S.Point({
+                            x: n.dots[i].x + cx,
+                            y: n.dots[i].y + cy,
+                            a: 1,
+                            z: 2,
+                            h: 0
+                        }));
+                        n.dots = n.dots.slice(0, i).concat(n.dots.slice(i + 1));
+                        d++;
+                    }
+                    for (var i = d; i < dots.length; i++) {
+                        if (dots[i].s) {
+                            dots[i].move(new S.Point({
+                                z: Math.random() * 20 + 5,
+                                a: Math.random(),
+                                h: 20
+                            }));
+                            dots[i].s = false;
+                            dots[i].e = 0.04;
+                            dots[i].move(new S.Point({
+                                x: Math.random() * a.w,
+                                y: Math.random() * a.h,
+                                a: 0.3, //.4
+                                z: Math.random() * 4,
+                                h: 0
+                            }));
+                        }
+                    }
+                    },
+                    explode: function () {
+                        var a = S.Drawing.getArea();
+                        for (var d = 0; d < dots.length; d++) {
+                            var angle = Math.random() * 2 * Math.PI;
+                            var speed = Math.random() * 10 + 10;
+                            var targetX = dots[d].p.x + Math.cos(angle) * speed * 30;
+                            var targetY = dots[d].p.y + Math.sin(angle) * speed * 30;
+                            dots[d].move(new S.Point({
+                                x: targetX,
+                                y: targetY,
+                                a: 0,
+                                z: 1.2,
+                                h: 0
+                            }));
+                        }
+                    },
+                render: function () {
+                    for (var d = 0; d < dots.length; d++) {
+                        dots[d].render();
+                    }
+                }
+            };
+        }());
+        S.init();
+
+        const canvas = document.getElementById('rainCanvas');
+        const ctx = canvas.getContext('2d');
+
+                function resizeCanvas() {
+                        canvas.width = window.innerWidth;
+                        canvas.height = window.innerHeight;
+                        // Resize các canvas khác nếu có
+                        const pinkboard = document.getElementById('pinkboard');
+                        if (pinkboard) {
+                            pinkboard.width = window.innerWidth;
+                            pinkboard.height = window.innerHeight;
+                        }
+                        const mainCanvas = document.querySelector('.canvas');
+                        if (mainCanvas) {
+                            mainCanvas.width = window.innerWidth;
+                            mainCanvas.height = window.innerHeight;
+                        }
+                }
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                window.addEventListener('orientationchange', resizeCanvas);
+
+        const letters = 'I LOVE U'.split('');
+        const fontSize = 10;
+        let columns;
+        let drops = [];
+        let rainInterval; // lưu ID của setInterval
+
+        function resetCanvas() {
+    // resize canvas
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+
+
+    // tính lại số cột
+    columns = Math.floor(canvas.width / fontSize);
+
+    // tạo lại mảng drops
+    drops = Array(columns).fill(1);
+
+    // nếu có interval cũ thì clear
+    if (rainInterval) clearInterval(rainInterval);
+
+    // tạo lại interval
+    rainInterval = setInterval(drawRainBackground, 50);
+}
+
+// vẽ mưa chữ
+function drawRainBackground() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#f584b7';
+    ctx.font = fontSize + 'px arial';
+
+    for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height || Math.random() > 0.95) drops[i] = 0;
+        drops[i]++;
+    }
+}
+
+// gọi lần đầu
+resetCanvas();
+
+// lắng nghe resize hoặc xoay
+window.addEventListener('resize', resetCanvas);
+window.addEventListener('orientationchange', resetCanvas);
+
+        const pinkboard = document.getElementById('pinkboard');
+const pinkCtx = pinkboard.getContext('2d');
+pinkboard.width = window.innerWidth;
+pinkboard.height = window.innerHeight;
+
 let hearts = [];
-function spawnHeart() {
-  // Spread hearts across the width, spawn from bottom
-  let x = Math.random() * w;
-  let y = h + 30 + Math.random()*60;
-  let size = 30 + Math.random() * 10;
-  let redHues = [0, 2, 5, 355, 358];
-  let hue = redHues[Math.floor(Math.random()*redHues.length)] + Math.floor(Math.random()*6-3);
-  let color = `hsl(${hue},85%,60%)`;
-  let rot = Math.random() * Math.PI * 2;
-  let vy = 3.2 + Math.random()*1.8; // faster hearts
-  hearts.push({
-    x, y, size, color, rot, rotSpeed: (Math.random()-0.5)*0.04, vy, bounce: Math.random()*Math.PI*2
-  });
-}
-// Spawn hearts after a delay for staged effect
-setTimeout(()=>{
-  for(let i=0;i<8;i++) spawnHeart(); // fewer hearts for smoother animation
-}, 2200);
+const heartImg = new Image();
+heartImg.src = 'heart-png-10095.png'; // đường dẫn hình trái tim
 
-// Envelope (letter) particles
-// Bubble particles
-// Firework particles
-let fireworks = [];
-// Firework: { phase: 'rocket'|'burst', rocket: {...}, particles: [...], life: number }
-function randomColor() {
-  // Vibrant color palette
-  let palettes = [
-    ['#ffecb3','#ffd54f','#ffb300','#ff6f00','#ff8a65'],
-    ['#b3e5fc','#4fc3f7','#0288d1','#01579b','#00bcd4'],
-    ['#f8bbd0','#f06292','#ad1457','#ba68c8','#7c43bd'],
-    ['#c8e6c9','#81c784','#388e3c','#a5d6a7','#43a047'],
-    ['#fff','#f44336','#e91e63','#9c27b0','#3f51b5']
-  ];
-  let palette = palettes[Math.floor(Math.random()*palettes.length)];
-  return palette[Math.floor(Math.random()*palette.length)];
+function createHeart(x, y) {
+    hearts.push({
+        x: x,
+        y: y,
+        size: 20 + Math.random() * 20,  // random size
+        alpha: 1,
+        dx: (Math.random() - 0.5) * 2,  // horizontal drift
+        dy: -Math.random() * 2 - 1      // vertical speed (bay lên)
+    });
 }
 
-function spawnFirework() {
-  if (fireworks.length >= 2) return; // max 2 rocket
-  let x = Math.random() * w * 0.8 + w*0.1;
-  let y = h * 0.95; // đáy màn hình
-  let color = randomColor();
-let rocket = { x, y, vx: (Math.random()-0.5)*0.5, vy: -30 - Math.random()*3, color, trail: [] };
+function drawHearts() {
+    pinkCtx.clearRect(0, 0, pinkboard.width, pinkboard.height);
+    hearts.forEach((heart, index) => {
+        pinkCtx.globalAlpha = heart.alpha;
+        pinkCtx.drawImage(heartImg, heart.x, heart.y, heart.size, heart.size);
 
-//   let rocket = {
-//     x, y,
-//     vx: (Math.random()-0.5)*0.3, // nhẹ cho mobile
-//     vy: -10 - Math.random()*3,   // bắn cao hơn
-//     color,
-//     trail: []
-// };
+        // Cập nhật vị trí
+        heart.x += heart.dx;
+        heart.y += heart.dy;
+        heart.alpha -= 0.01;
 
-  fireworks.push({phase:'rocket', rocket, particles:null, life:0});
-}
-
-function drawFirework(fw) {
-  if (fw.phase === 'rocket') {
-    // Draw rocket trail (long, fading)
-    if (fw.rocket.trail.length > 2) {
-      ctx.save();
-      ctx.beginPath();
-      for(let i=0;i<fw.rocket.trail.length-1;i++) {
-        ctx.moveTo(fw.rocket.trail[i][0], fw.rocket.trail[i][1]);
-        ctx.lineTo(fw.rocket.trail[i+1][0], fw.rocket.trail[i+1][1]);
-      }
-      ctx.strokeStyle = fw.rocket.color;
-      ctx.globalAlpha = 0.10 + 0.18 * (fw.rocket.trail.length/32);
-      ctx.lineWidth = 2.8;
-      ctx.shadowColor = fw.rocket.color;
-      ctx.shadowBlur = 22;
-      ctx.stroke();
-      ctx.restore();
-    }
-    // Draw rocket head
-    ctx.save();
-    ctx.globalAlpha = 0.98;
-    ctx.beginPath();
-    ctx.arc(fw.rocket.x, fw.rocket.y, 8, 0, Math.PI*2);
-    ctx.fillStyle = fw.rocket.color;
-    ctx.shadowColor = '#fff';
-    ctx.shadowBlur = 28;
-    ctx.fill();
-    ctx.restore();
-  } else if (fw.phase === 'burst' && fw.particles) {
-    for(let p of fw.particles) {
-      // Draw longer trail, fade out
-      if (p.trail.length > 2) {
-        ctx.save();
-        ctx.beginPath();
-        for(let i=0;i<p.trail.length-1;i++) {
-          ctx.moveTo(p.trail[i][0], p.trail[i][1]);
-          ctx.lineTo(p.trail[i+1][0], p.trail[i+1][1]);
+        // Xóa khi alpha <= 0
+        if (heart.alpha <= 0) {
+            hearts.splice(index, 1);
         }
-        ctx.strokeStyle = p.color;
-        ctx.globalAlpha = 0.10 + 0.13 * (p.alpha);
-        ctx.lineWidth = 2.5;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 16;
-        ctx.stroke();
-        ctx.restore();
-      }
-      // Sparkle at the end before disappearing
-      if (p.alpha < 0.25 && p.alpha > 0.05) {
-        ctx.save();
-        ctx.globalAlpha = p.alpha*2.5;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius*2.2, 0, Math.PI*2);
-        ctx.fillStyle = '#fff';
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 32;
-        ctx.fill();
-        ctx.restore();
-      }
-      // Draw particle
-      ctx.save();
-      ctx.globalAlpha = p.alpha;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
-      ctx.fillStyle = p.color;
-      ctx.shadowColor = p.color;
-      ctx.shadowBlur = 24;
-      ctx.fill();
-      ctx.restore();
-    }
-  }
+    });
 }
 
-function drawBubble(b) {
-  ctx.save();
-  ctx.globalAlpha = b.alpha;
-  ctx.beginPath();
-  ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
-  ctx.fillStyle = b.color;
-  ctx.shadowColor = '#fff';
-  ctx.shadowBlur = 12;
-  ctx.fill();
-  ctx.restore();
+function heartLoop() {
+    drawHearts();
+    requestAnimationFrame(heartLoop);
 }
 
-function drawEnvelope(x, y, size, rot) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(rot);
-  ctx.scale(size/40, size/40);
-  // Envelope body
-  ctx.beginPath();
-  ctx.rect(-20, -12, 40, 24);
-  ctx.fillStyle = '#fffde7';
-  ctx.shadowColor = '#ffe0f7';
-  ctx.shadowBlur = 8;
-  ctx.fill();
-  ctx.strokeStyle = '#f8bbd0';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  // Envelope flap
-  ctx.beginPath();
-  ctx.moveTo(-20, -12);
-  ctx.lineTo(0, 8);
-  ctx.lineTo(20, -12);
-  ctx.closePath();
-  ctx.fillStyle = '#ffd1e6';
-  ctx.fill();
-  ctx.strokeStyle = '#f8bbd0';
-  ctx.stroke();
-  // Heart stamp
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.bezierCurveTo(0, -3, 5, -3, 5, 0);
-  ctx.bezierCurveTo(5, 4, 0, 6, 0, 8);
-  ctx.bezierCurveTo(0, 6, -5, 4, -5, 0);
-  ctx.bezierCurveTo(-5, -3, 0, -3, 0, 0);
-  ctx.closePath();
-  ctx.fillStyle = '#ff69b4';
-  ctx.shadowColor = '#fff';
-  ctx.shadowBlur = 4;
-  ctx.fill();
-  ctx.restore();
+// Tạo trái tim ngẫu nhiên
+    setInterval(() => {
+        createHeart(Math.random() * pinkboard.width, Math.random() * pinkboard.height);
+    }, 200);
 
-}
+    heartLoop();
 
-// Trung thu: vẽ mặt trăng, đèn lồng, mây
-function drawMoon() {
-  ctx.save();
-  ctx.globalAlpha = 0.9;
-  ctx.beginPath();
-  ctx.arc(w/2, h/2-180, 90, 0, Math.PI*2);
-  ctx.fillStyle = '#fffde4';
-  ctx.shadowColor = '#ffe0b2';
-  ctx.shadowBlur = 60;
-  ctx.fill();
-  ctx.restore();
-}h
-function drawLantern(x, y, scale=1, color='#ffb74d') {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(scale, scale);
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 22, 32, 0, 0, Math.PI*2);
-  ctx.fillStyle = color;
-  ctx.shadowColor = '#fffde4';
-  ctx.shadowBlur = 16;
-  ctx.fill();
-  ctx.strokeStyle = '#fff8e1';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  // dây treo
-  ctx.beginPath();
-  ctx.moveTo(0, -32);
-  ctx.lineTo(0, -50);
-  ctx.strokeStyle = '#bdbdbd';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  ctx.restore();
-}
-function drawCloud(x, y, scale=1) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(scale, scale);
-  ctx.globalAlpha = 0.5;
-  ctx.beginPath();
-  ctx.arc(0, 0, 30, 0, Math.PI*2);
-  ctx.arc(30, 10, 22, 0, Math.PI*2);
-  ctx.arc(-25, 10, 18, 0, Math.PI*2);
-  ctx.arc(10, 25, 16, 0, Math.PI*2);
-  ctx.fillStyle = '#fff';
-  ctx.fill();
-  ctx.restore();
-}
+    // Resize canvas khi thay đổi cửa sổ
+    window.addEventListener('resize', () => {
+        pinkboard.width = window.innerWidth;
+        pinkboard.height = window.innerHeight;
+    });
+    window.addEventListener('orientationchange', () => {
+        pinkboard.width = window.innerWidth;
+        pinkboard.height = window.innerHeight;
+    });
+    
+    </script>
 
-// Responsive
-window.addEventListener('resize', resizeCanvas);
-
-// Draw heart shape
-function drawHeart(x, y, size, color, rot) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(rot);
-  ctx.scale(size/50, size/50);
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.bezierCurveTo(0, -15, 25, -15, 25, 0);
-  ctx.bezierCurveTo(25, 20, 0, 30, 0, 40);
-  ctx.bezierCurveTo(0, 30, -25, 20, -25, 0);
-  ctx.bezierCurveTo(-25, -15, 0, -15, 0, 0);
-  ctx.closePath();
-  ctx.fillStyle = color;
-  ctx.shadowColor = '#fff';
-  ctx.shadowBlur = 12;
-  ctx.fill();
-  ctx.restore();
-}
-
-// Main animation loop
-function animate() {
-    // let moonMove = Math.sin(Date.now()/1200) * 30; // <-- đặt ở đây
-  // Hiệu ứng trăng chuyển động hình vòng cung
-  let moonPhase = (Math.sin(Date.now()/4000) + 1) / 2;
-  // Hiệu ứng trăng chuyển động hình vòng cung chậm hơn
-  let moonArcRadius = 70;
-  let moonArcAngle = Math.sin(Date.now()/7000) * Math.PI; // chu kỳ dài hơn, di chuyển chậm hơn
-  let moonMoveX = Math.cos(moonArcAngle) * moonArcRadius;
-  let moonMoveY = Math.sin(moonArcAngle) * moonArcRadius;
-
-
-  ctx.clearRect(0,0,w,h);  // Animate fireworks
-  // Only spawn one firework at a time, random interval
-  if (fireworks.length === 0 && Math.random() < (0.02 + Math.random()*0.08)) spawnFirework();
-  for(let fw of fireworks) {
-    drawFirework(fw);
-  if (fw.phase === 'rocket') {
-      // Update rocket
-      fw.rocket.trail.push([fw.rocket.x, fw.rocket.y]);
-      if (fw.rocket.trail.length > 24) fw.rocket.trail.shift();
-      fw.rocket.x += fw.rocket.vx;
-      fw.rocket.y += fw.rocket.vy;
-      fw.rocket.vy += 0.25; // gravity
-      // Burst only after rocket reaches peak and starts falling
-      console.log(fw.rocket.vy)
-      if (fw.rocket.vy > -18 && !fw.particles) {
-        // Burst phase
-        let burstType = Math.random();
-        let count = 60 + Math.floor(Math.random()*20); 
-         // wider burst
-        let particles = [];
-        for(let i=0;i<count;i++) {
-          let angle = (Math.PI*2) * (i/count);
-          let speed = 15 + Math.random()*7;  // wider spread
-          // Star/flower shape
-          if (burstType > 0.7) {
-            angle += Math.sin(i*2.5) * 0.3;
-            speed *= 0.7 + 0.6*Math.abs(Math.sin(i*2.5));
-          }
-          // Multi-color burst: random vibrant color for each particle
-          let color = randomColor();
-          particles.push({
-            x: fw.rocket.x,
-            y: fw.rocket.y,
-            vx: Math.cos(angle)*speed,
-            vy: Math.sin(angle)*speed,
-            alpha: 1,
-            color,
-            radius: 4.5 + Math.random()*3.5,
-            trail: [],
-            sparkle: Math.random() > 0.7
-          });
-        }
-        fw.phase = 'burst';
-        fw.particles = particles;
-        // Slow down hearts for 1.2s
-        // window.heartSlowUntil = Date.now() + 1200;
-      }
-    } else if (fw.phase === 'burst' && fw.particles) {
-      for(let p of fw.particles) {
-        p.trail.push([p.x, p.y]);
-        if (p.trail.length > 40) p.trail.shift(); // even longer trail
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vx *= 0.98;
-        p.vy *= 0.98;
-        // Fade slower at first, then faster near the end
-        if (p.alpha > 0.5) {
-          p.alpha -= 0.008 + Math.random()*0.006;
-        } else {
-          p.alpha -= 0.022 + Math.random()*0.012;
-        }
-        // Sparkle at the end
-        if (p.alpha < 0.25 && p.alpha > 0.05) {
-          p.radius += 0.2;
-        }
-      }
-    }
-    fw.life++;
-  }
-  // Remove faded fireworks
-  for(let i=fireworks.length-1;i>=0;i--) {
-    if (fireworks[i].phase === 'burst') {
-      if (fireworks[i].life > 80 || fireworks[i].particles.every(p=>p.alpha<=0)) {
-        fireworks.splice(i,1);
-      }
-    } else if (fireworks[i].phase === 'rocket') {
-      if (fireworks[i].life > 60) {
-        fireworks.splice(i,1);
-      }
-    }
-  }
-  // Responsive positions/sizes for mobile and portrait
-  let isMobile = true;
-  let isPortrait = h > w;
-  // iPhone portrait: boost sizes
-  let charScale = 1;
-  let fontScale = 1;
-  if (isMobile && isPortrait) {
-    charScale = 1.35;
-    fontScale = 1.25;
-  } else if (isMobile) {
-    charScale = 1;
-    fontScale = 1;
-  }
-  let moonY = isMobile ? h/2-80 : h/2-180;
-  let moonR = (isMobile ? 50 : 90) * charScale;
-  drawMoon = function() {
-    ctx.save();
-    // Vị trí mặt trăng chuyển động theo vòng cung
-    let moonCenterX = w/2 + moonMoveX;
-    let moonCenterY = moonY + moonMoveY;
-    ctx.globalAlpha = 0.9;
-    ctx.beginPath();
-    ctx.arc(moonCenterX, moonCenterY, moonR, 0, Math.PI*2);
-    ctx.fillStyle = '#fffde4';
-    ctx.shadowColor = '#ffe0b2';
-    ctx.shadowBlur = 40 * charScale;
-    ctx.fill();
-    ctx.restore();
-    // Draw Chú Cuội cartoon sitting on the moon
-    // drawChuCuoi(moonCenterX, moonCenterY, moonR);
-  };
-  drawMoon();
-  drawCloud(w/2-0.27*w, moonY-40, ( 1.1) * charScale);
-  drawCloud(w/2+0.2*w, moonY+10, ( 1) * charScale);
-  drawCloud(w/2, h/2-0.13*h, ( 1.2) * charScale);
-  drawLantern(w/2-0.37*w, h/2-0.13*h, ( 1) * charScale, '#ffb74d');
-  drawLantern(w/2+0.37*w, h/2-0.10*h, ( 1) * charScale, '#e57373');
-  drawLantern(w/2, h/2+0.10*h, ( 1) * charScale, '#ffd54f');
-
-  // Draw custom image.png at the bottom, max width
-  if (customImg.complete && customImg.naturalWidth) {
-    ctx.save();
-    let imgW = 900; // 98% of canvas width
-    let imgH = imgW * (customImg.naturalHeight/customImg.naturalWidth);
-    let y = h - imgH - 8; // 8px margin from bottom
-    ctx.globalAlpha = 0.98;
-    ctx.drawImage(customImg, w/2 - imgW/2, y, imgW, imgH);
-    ctx.restore();
-  }
-
-  // Draw male character (left, căn giữa khung hình)
-  if (maleImg.complete && maleImg.naturalWidth) {
-    ctx.save();
-    let charX = w/2-(180)*charScale;
-    let charY = h/2+(120)*charScale;
-    let charW = (180)*charScale, charH = (220)*charScale;
-    ctx.translate(charX, charY);
-    ctx.rotate(Math.sin(Date.now()*0.001)*0.05);
-    let scale = 1 + Math.sin(Date.now()*0.002)*0.05;
-    ctx.scale(scale, scale);
-    ctx.drawImage(maleImg, -charW/2, -charH/2, charW, charH);
-    ctx.restore();
-  }
-  // Draw female character (right, căn giữa khung hình, flip horizontal)
-  if (femaleImg.complete && femaleImg.naturalWidth) {
-    ctx.save();
-    let charX = w/2+(180)*charScale;
-    let charY = h/2+(120)*charScale;
-    let charW = (180)*charScale, charH = (220)*charScale;
-    ctx.translate(charX, charY);
-    ctx.rotate(Math.cos(Date.now()*0.001)*0.05);
-    let scale = 1 + Math.cos(Date.now()*0.002)*0.05;
-    ctx.scale(-scale, scale); // flip horizontal
-    ctx.drawImage(femaleImg, -charW/2, -charH/2, charW, charH);
-    ctx.restore();
-  }
-
-  // Animate hearts
-  for(let heart of hearts) {
-    // Speed: fast at bottom, slow at center/top
-    let progress = 1 - (heart.y / h); // 0 at bottom, 1 at top
-    let speedFactor = 2.2 - progress * 1.2;
-    heart.y -= heart.vy * speedFactor;
-  heart.rot += heart.rotSpeed;
-  heart.x += Math.sin(heart.bounce)*1.2; // simpler bounce
-  let displaySize = heart.size + Math.sin(heart.bounce)*4; // rung quanh size gốc, biên độ lớn hơn
-  drawHeart(heart.x, heart.y, displaySize, heart.color, heart.rot);
-  // Bounce effect
-  // heart.size += Math.sin(heart.bounce)*0.2; // bỏ tăng size gốc
-    if(heart.y < -50) {
-      heart.y = h + 30 + Math.random()*60;
-      heart.x = Math.random() * w;
-    }
-  }
-
-  // Cute text
-  ctx.save();
-  let nameFont = `bold ${48*fontScale}px Comic Sans MS, Pacifico, Arial`;
-  let daysFont = isMobile ? `bold ${40*fontScale}px Comic Sans MS, Pacifico, Arial` : `bold ${80*fontScale}px Comic Sans MS, Pacifico, Arial`;
-  let labelFont = isMobile ? `bold ${18*fontScale}px Comic Sans MS, Pacifico, Arial` : `bold ${36*fontScale}px Comic Sans MS, Pacifico, Arial`;
-  ctx.font = nameFont;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.shadowColor = '#fff';
-  ctx.shadowBlur = 12 * fontScale;
-  ctx.strokeStyle = '#ffe0f7';
-  ctx.lineWidth = 8 * fontScale;
-  ctx.strokeText(MALE_NAME, w/2-(180)*charScale, h/2-(isMobile?20:40)*charScale);
-  ctx.fillStyle = '#ff69b4';
-  ctx.fillText(MALE_NAME, w/2-(180)*charScale, h/2-(isMobile?20:40)*charScale);
-
-  ctx.strokeText(FEMALE_NAME, w/2+180*charScale, h/2-(isMobile?20:40)*charScale);
-  ctx.fillStyle = '#ba68c8';
-  ctx.fillText(FEMALE_NAME, w/2+180*charScale, h/2-(isMobile?20:40)*charScale);
-
-  // Large central heart with liquid fill effect
-  let heartCenterX = w/2;
-  let heartCenterY = 100 + Math.min(w, h) * 0.16;
-  let heartSize = Math.min(w, h) * 0.32;
-  // Draw heart outline
-  ctx.save();
-  ctx.translate(heartCenterX, heartCenterY);
-  ctx.scale(heartSize/50, heartSize/50);
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.bezierCurveTo(0, -15, 25, -15, 25, 0);
-  ctx.bezierCurveTo(25, 20, 0, 30, 0, 40);
-  ctx.bezierCurveTo(0, 30, -25, 20, -25, 0);
-  ctx.bezierCurveTo(-25, -15, 0, -15, 0, 0);
-  ctx.closePath();
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = '#ffb6d5';
-  ctx.shadowColor = '#fff';
-  ctx.shadowBlur = 8;
-  ctx.stroke();
-  ctx.restore();
-
-  // Liquid fill animation: animate from empty to full, then keep waving
-  if(typeof window.liquidFill === 'undefined') window.liquidFill = 0;
-  if(window.liquidFill < 1) {
-    window.liquidFill += 0.025; // speed of fill
-    if(window.liquidFill > 1) window.liquidFill = 1;
-  }
-  let liquidPercent = window.liquidFill;
-  let liquidHeight = heartSize * 0.8 * liquidPercent;
-  ctx.save();
-  ctx.translate(heartCenterX, heartCenterY);
-  ctx.scale(heartSize/50, heartSize/50);
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.bezierCurveTo(0, -15, 25, -15, 25, 0);
-  ctx.bezierCurveTo(25, 20, 0, 30, 0, 40);
-  ctx.bezierCurveTo(0, 30, -25, 20, -25, 0);
-  ctx.bezierCurveTo(-25, -15, 0, -15, 0, 0);
-  ctx.closePath();
-  ctx.clip();
-  // Draw liquid
-  let waveY = 40 - (liquidHeight/(heartSize/50));
-  ctx.beginPath();
-  ctx.moveTo(-25, waveY);
-  for(let x=-25;x<=25;x+=2){
-    let waveAmp = (window.liquidFill < 1) ? 1 : 3; // bigger wave when full
-    let y = waveY + Math.sin(Date.now()/600 + x/6)*waveAmp;
-    ctx.lineTo(x, y);
-  }
-  ctx.lineTo(25, 41);
-  ctx.lineTo(-25, 41);
-  ctx.closePath();
-  ctx.fillStyle = 'rgba(255,105,180,0.85)';
-  ctx.shadowColor = '#fff';
-  ctx.shadowBlur = 16;
-  ctx.fill();
-  ctx.restore();
-
-  // Draw date count in center of heart
-  ctx.save();
-  ctx.font = `bold ${Math.floor(heartSize*0.38)}px Comic Sans MS, Pacifico, Arial`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.shadowColor = '#fff';
-  ctx.shadowBlur = 16;
-  ctx.strokeStyle = '#ffe0f7';
-  ctx.lineWidth = 8;
-  let showDays = Math.floor(animatedDays);
-  ctx.strokeText(showDays, heartCenterX, heartCenterY);
-  ctx.fillStyle = '#ff4081';
-  ctx.fillText(showDays, heartCenterX, heartCenterY);
-  ctx.font = `bold ${Math.floor(heartSize*0.13)}px Comic Sans MS, Pacifico, Arial`;
-  ctx.fillStyle = '#b39ddb';
-  ctx.fillText('days together', heartCenterX, heartCenterY + heartSize*0.22);
-  ctx.restore();
-
-  // Animate days counter
-  if(animatedDays < daysInLove) {
-    animatedDays += (daysInLove - animatedDays)*0.08 + 0.5;
-    if(animatedDays > daysInLove) animatedDays = daysInLove;
-  }
-
-  requestAnimationFrame(animate);
-}
-
-// Draw a simple Chú Cuội cartoon sitting on the moon
-function drawChuCuoi(x, y, r) {
-  ctx.save();
-  // Body
-  ctx.beginPath();
-  ctx.arc(x, y + r*0.25, r*0.13, 0, Math.PI*2);
-  ctx.fillStyle = '#ffe082';
-  ctx.fill();
-  // Head
-  ctx.beginPath();
-  ctx.arc(x, y + r*0.12, r*0.07, 0, Math.PI*2);
-  ctx.fillStyle = '#ffcc80';
-  ctx.fill();
-  // Face details
-  ctx.beginPath();
-  ctx.arc(x, y + r*0.11, r*0.03, 0, Math.PI);
-  ctx.strokeStyle = '#795548';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  // Eyes
-  ctx.beginPath();
-  ctx.arc(x - r*0.025, y + r*0.10, r*0.012, 0, Math.PI*2);
-  ctx.arc(x + r*0.025, y + r*0.10, r*0.012, 0, Math.PI*2);
-  ctx.fillStyle = '#222';
-  ctx.fill();
-  // Hair
-  ctx.beginPath();
-  ctx.arc(x, y + r*0.07, r*0.07, Math.PI, Math.PI*2);
-  ctx.fillStyle = '#6d4c41';
-  ctx.fill();
-  // Legs
-  ctx.beginPath();
-  ctx.moveTo(x - r*0.04, y + r*0.32);
-  ctx.lineTo(x - r*0.04, y + r*0.40);
-  ctx.moveTo(x + r*0.04, y + r*0.32);
-  ctx.lineTo(x + r*0.04, y + r*0.40);
-  ctx.strokeStyle = '#8d6e63';
-  ctx.lineWidth = 4;
-  ctx.stroke();
-  // Arms
-  ctx.beginPath();
-  ctx.moveTo(x - r*0.09, y + r*0.20);
-  ctx.lineTo(x - r*0.16, y + r*0.13);
-  ctx.moveTo(x + r*0.09, y + r*0.20);
-  ctx.lineTo(x + r*0.16, y + r*0.13);
-  ctx.strokeStyle = '#8d6e63';
-  ctx.lineWidth = 3;
-  ctx.stroke();
-  ctx.restore();
-}
-
-// Click to spawn more hearts
-canvas.addEventListener('pointerdown', ()=>{
-  // for(let i=0;i<2;i++) spawnBalloon();
-  // for(let b of balloons) {
-  //   b.y -= b.vy;
-  //   b.x += b.vx + Math.sin(Date.now()/1200 + b.sway)*0.7;
-  //   b.alpha = 0.7 + 0.3*Math.sin(Date.now()/1500 + b.sway);
-  //   drawBalloon(b);
-  //   if(b.y < -60) {
-  //     b.y = h + 60;
-  //     b.x = Math.random()*w;
-  //   }
-  // }
-  // for(let i=0;i<10;i++) spawnHeart();
-  // Xoay tất cả trái tim một góc nhỏ khi chạm
-  for(let heart of hearts) {
-    heart.rot += Math.PI/6; // xoay 30 độ
-  }
-});
-
-animate();
-</script>
+    	<script src="http://code.jquery.com/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="jquery.fireworks.js"></script>
+	<script type="text/javascript">
+		$('.fireworks').fireworks({ 
+		  sound: true, // sound effect
+		  opacity: 0.9, 
+		  width: '100%', 
+		  height: '100%' 
+		});
+	</script>
+    
+</body>
 </html>
