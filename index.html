@@ -2,39 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Chỉ chạy khi quay ngang</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xoay điện thoại</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <style>
-    .cover{
-        content: "📱🔄 Please rotate your phone ↔️";
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: #000;
-        color: #fff;
-        font-size: 22px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        z-index: 9999;
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fff0f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: 'Montserrat', Arial, sans-serif;
+      color: #ff4fa3;
+      text-align: center;
+    }
+    .rotate-icon {
+      font-size: 8vw;
+      margin-bottom: 2vw;
+      display: block;
+    }
+    .message {
+      font-size: 6vw;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <div class="cover">
-    📱🔄 Please rotate your phone ↔️
+  <div>
+    <div class="rotate-icon">🔄</div>
+    <div class="message">Vui lòng xoay ngang điện thoại<br>để trải nghiệm tốt nhất!</div>
   </div>
   <script>
-    function checkLandscape() {
-      if(window.innerWidth > window.innerHeight) {
-        window.location.href = "index3.html";
+    function checkOrientation() {
+      if (window.matchMedia("(orientation: landscape)").matches) {
+        window.location.href = "index1.html";
       }
     }
-    window.addEventListener('resize', checkLandscape);
-    window.addEventListener('orientationchange', checkLandscape);
-    checkLandscape();
+    window.addEventListener('orientationchange', checkOrientation);
+    window.addEventListener('resize', checkOrientation);
+    // Kiểm tra ngay khi load
+    checkOrientation();
   </script>
 </body>
 </html>
