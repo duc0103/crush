@@ -450,7 +450,7 @@
         <text dy="-5">
             <textPath style="font-family: fantasy;" xlink:href="#partialPath" startOffset="12">
                 Happy Women's Day
-                🌹......................Yêu Em..................................................................................
+                🌹......................Yêu Em..........................................................................................................................................................................................................................................................
             </textPath>
         </text>
 
@@ -940,6 +940,66 @@
     </script> 
       <script src="loveletter.js"></script>
       <audio id="bg-music" src="./audio.mp3" preload="auto"></audio>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+  // code xử lý dữ liệu ở đây
+  const sheetId = '1VnLr3v5I-VGequ8i4YHwuKxwe8Kn0r1hLC1AE5TW-_w';
+  const sheetName = 'Sheet1';
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+
+  const params = new URLSearchParams(window.location.search);
+  const targetCode = params.get('code'); // ví dụ: ?code=2
+
+  fetch(url)
+    .then(res => res.text())
+    .then(text => {
+      const json = JSON.parse(text.substr(47).slice(0, -2));
+      const rows = json.table.rows;
+
+      // Chuyển sang object đơn giản
+      const data = rows.map(r => ({
+        code: r.c[0]?.v ?? null,
+        title: r.c[1]?.v ?? null,
+        message: r.c[2]?.v ?? null,
+        imageUrl: r.c[3]?.v ?? null,
+        audioUrl: r.c[4]?.v ?? null,
+      }));
+
+      // 🔍 Nếu có ?code= → lấy dòng đó
+      let result = targetCode
+        ? data.find(item => item.code?.toString() === targetCode)
+        : null; // nếu không có thì lấy dòng đầu tiên
+
+      if (!result) {
+        console.error('❌ Không tìm thấy dữ liệu phù hợp');
+        return;
+      }
+
+      // ✅ Trả ra 1 object duy nhất
+      console.log('✅ Dữ liệu:', result);
+
+
+        document.querySelector('.card-title').textContent = result.title || 'Gửi em,';
+        document.querySelector('.card-body-text').textContent = result.message || '';
+
+        const img = document.querySelector('.polaroid-image');
+        console.log(img)
+        if (result.imageUrl) {
+          img.src = result.imageUrl;
+        }
+        const audio = document.getElementById('bg-music');
+        if (result.audioUrl) {
+          audio.src = result.audioUrl;
+        }
+
+      // (Tùy chọn) in trực tiếp ra web
+      // document.body.innerText = JSON.stringify(result, null, 2);
+    })
+    .catch(err => console.error('Lỗi khi đọc dữ liệu:', err));
+});
+
+</script>
 </body>
 
 </html>
