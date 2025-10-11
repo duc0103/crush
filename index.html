@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="loveletter.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 
     <style>
         .container {
@@ -208,7 +209,7 @@
 
         /* Vùng chứa nội dung (chữ và ảnh) */
         .content-wrapper {
-            font-family: "Brush Script", cursive;
+            font-family: 'Great Vibes', cursive;
             position: relative;
             z-index: 10;
             height: 65vh;
@@ -226,7 +227,7 @@
         }
         
         .card-title {
-            font-family: 'Pacifico', cursive;
+            font-family: 'Great Vibes', cursive;
             font-size: 2.25rem;
             line-height: 2.5rem;
             color: #ec4899; /* pink-500 */
@@ -237,7 +238,7 @@
             margin-top: 1rem;
             color: black; /* gray-600 */
             line-height: 1.625;
-            font-weight: 600;
+            font-size: 1.2rem;
             white-space: pre-wrap;
         }
         
@@ -329,7 +330,7 @@
         
         .polaroid-caption {
             text-align: center;
-            font-family: 'Pacifico', cursive;
+            font-family: 'Great Vibes', cursive;
             color: #6B7280; /* gray-500 */
             padding-top: 0.75rem;
             font-size: 1.125rem;
@@ -396,7 +397,7 @@
                     <div class="polaroid-container">
                         <div class="polaroid-frame">
                             <div class="polaroid-image-wrapper">
-                                <img src="https://scontent.fhan15-2.fna.fbcdn.net/v/t39.30808-6/491919960_2504101359927075_6615968718866659085_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=107&ccb=1-7&_nc_sid=833d8c&_nc_ohc=1gfMIu6TU_EQ7kNvwHYTSip&_nc_oc=Adl9PCGKe18KpApbEKT-kPPXBEd3S49Vk9HwEVGghzgSbTVRVr5aaz-94aOURTW5Cu-0uigmkqcFfY5VJ0CrTYRW&_nc_zt=23&_nc_ht=scontent.fhan15-2.fna&_nc_gid=Ap7fSe2S_N7MGABccYpXRw&oh=00_AfejT-Tau6HSngwmcsnz1MuyCmJ9iPAbpF-5WqWfGhvmvQ&oe=68EC8278" alt="Kỷ niệm" class="polaroid-image">
+                                <img src="https://i.pinimg.com/736x/a3/50/92/a35092722ac45b049e14bb4ae01653b2.jpg" alt="Kỷ niệm" class="polaroid-image">
                             </div>
                         </div>
                         
@@ -658,13 +659,13 @@
             }
         });
 
-        cb.addEventListener("input", () => {
-            if (cb.checked) {
-                useThePath.style.display = "block";
-            } else {
-                useThePath.style.display = "none";
-            }
-        });
+        // cb.addEventListener("input", () => {
+        //     if (cb.checked) {
+        //         useThePath.style.display = "block";
+        //     } else {
+        //         useThePath.style.display = "none";
+        //     }
+        // });
     </script>
             <div id="heart1" style="display: none;"> </div>
 
@@ -735,10 +736,10 @@
                                  c-16.072-12.613-41.381-26.674-72.329-23.977c-21.664,2.405-52.653,12.308-77.277,45.856c-13.392,19.922-16.495,52.272,4.132,72.986
                                  c3.371,3.385,7.075,6.243,11.008,8.573c4.885,2.894,10.125,4.964,15.515,6.228C354.624,212.802,357.947,181.899,370.903,162.627z" />
         </svg>
-        <p id="text-click" style=" display: none;   font-family: fantasy;
+        <p id="text-click" style=" display: none;   font-family: 'Great Vibes', cursive;
         color: indianred;
-        font-size: 40px;
-        top: 80%;">Click me now !</p>
+        font-size: 30px;
+        top: 80%;">Embe ấn vào đây nhé</p>
     </div>
 
 
@@ -826,7 +827,7 @@
                 head.appendChild(animation);
                 dust.classList.add('dustDef');
                 dust.setAttribute('style', `animation: blink${animationId++} ${fallingTime}s cubic-bezier(.71, .11, .68, .83) infinite ${animationDelay}s`);
-                document.getElementById(node).appendChild(dust);
+                document.getElementByIFtod(node).appendChild(dust);
             }
 
             // yes, I'm doing it manually to get the effect I want.. can be easily changed to render randomly
@@ -964,6 +965,7 @@
         message: r.c[2]?.v ?? null,
         imageUrl: r.c[3]?.v ?? null,
         audioUrl: r.c[4]?.v ?? null,
+        receiver: r.c[5]?.v ?? null
       }));
 
       // 🔍 Nếu có ?code= → lấy dòng đó
@@ -991,6 +993,9 @@
         const audio = document.getElementById('bg-music');
         if (result.audioUrl) {
           audio.src = result.audioUrl;
+        }
+        if(result.receiver) {
+            document.querySelector('.text').innerHTML = result.receiver;
         }
 
       // (Tùy chọn) in trực tiếp ra web
